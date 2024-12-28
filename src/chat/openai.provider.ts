@@ -7,10 +7,7 @@ export class OpenAIProvider {
   private readonly openai: OpenAI;
 
   constructor(private readonly configService: ConfigService) {
-    this.openai = new OpenAI({
-        organization: "org-NewJmfisFaAP9IaOrgYGqL8r",
-        project: "proj_TJrn0eKhhl4FjbXiqSbGuAE8",
-    });
+    this.openai = new OpenAI();
   }
 
   getInstance(): OpenAI {
