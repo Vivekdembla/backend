@@ -17,12 +17,19 @@ export class ChatController {
     console.log(prompt, 'prompt');
     const openai = this.openAIProvider.getInstance();
     try {
-      // const response = await openai.chat.completions.create({
-      //     model: "gpt-4o-mini",
-      //     messages: [{ role: "user", content: prompt }, { role: "system", content: "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra" }],
-      // });
-      // const answer = response.choices[0].message.content
-      const answer = 'react';
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'user', content: prompt },
+          {
+            role: 'system',
+            content:
+              "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra",
+          },
+        ],
+      });
+      const answer = response.choices[0].message.content;
+      //   const answer = 'react';
       if (answer == 'react') {
         res.json({
           prompts: [
@@ -30,6 +37,7 @@ export class ChatController {
             `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
           ],
           uiPrompts: [reactBasePrompt],
+          techStack: answer,
         });
         return;
       }
@@ -40,10 +48,11 @@ export class ChatController {
             `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`,
           ],
           uiPrompts: [nodeBasePrompt],
+          techStack: answer,
         });
         return;
       }
-      res.status(403).json({ message: 'You cant access this' });
+      res.status(403).json({ message: "You can't access this" });
     } catch (error) {
       console.error(error);
       res.status(400).send(`Error fetching data`);
